@@ -3,6 +3,7 @@
 
 import json
 import pprint
+import datetime
 
 
 def squareFunc(x):
@@ -26,20 +27,32 @@ nums = (1, 8, 4, 5, 13, 26, 381, 410, 58, 47)
 grades = (81, 89, 94, 78, 61, 66, 99, 74)
 
 # TODO: use map to create a new sequence of values
-
+squares = list(map(squareFunc, nums))
+print(squares)
 # TODO: use sorted and map to change numbers to grades
-
+grades = sorted(grades)
+letGrades = list(map(toGrade, grades))
+print(letGrades)
 # Use the filter on our data - let's filter out all seismic events that were *not* quakes
 # open the data file and load the JSON
-# with open("../../30DayQuakes.json", "r") as datafile:
-#     data = json.load(datafile)
+with open("30DayQuakes.json", "r") as datafile:
+    data = json.load(datafile)
 
 
 # filter the data down to the largest events
-# def bigmag(q):
-#     return q['properties']['mag'] is not None and q['properties']['mag'] >= 6
+def bigmag(q):
+    return q['properties']['mag'] is not None and q['properties']['mag'] >= 6
 
 
-# results = list(filter(bigmag, data['features']))
+results = list(filter(bigmag, data['features']))
 
 # TODO: transform the largest events into a simpler structure
+def simplify(quake):
+    return {
+        "place": quake["properties"]["place"],
+        "magnitude": quake["properties"]["mag"],
+        "date": str(datetime.date.fromtimestamp(quake["properties"]["time"]/1000))
+    }
+
+results = list(map(simplify, results))
+pprint.pp(results)
